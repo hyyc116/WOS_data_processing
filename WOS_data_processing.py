@@ -10,7 +10,7 @@
     
     每篇论文每年的被引次数： pid_year_citnum.json
 
-    每篇论文对应的作者数量： pid_authornum.json
+    每篇论文对应的作者数量： pid_teamsize.json
     
     --- subject相关
 
@@ -34,158 +34,20 @@
 
 from basic_config import *
 
-def fetch_subjects():
-    pid_subjects = defaultdict(list)
-    ## query database wos_summary
-    query_op = dbop()
-    num_with_subject = 0
-    sql = 'select id,subject from wos_core.wos_subjects'
-    progress=0
-    for pid,subject in query_op.query_database(sql):
-        progress+=1
-        if progress%1000000==0:
-            logging.info('progress {:}, {:} papers within subjects ...'.format(progress,num_with_subject))
+from basic_attr_stats import *
 
-        # if subject.strip().lower() in subjects:
-        #     num_with_subject+=1
-        pid_subjects[pid].append(subject)
-
-    query_op.close_db()
-    logging.info('{:}  papers have subject'.format(len(pid_subjects.keys())))
-    open('data/pid_subjects.json','w').write(json.dumps(pid_subjects))
-
-    ##加载所有论文的subject对应的最高级的subject
-    logging.info('loading mapping relations to top subject ...')
-    top_subject = None
-    subject_2_top = {}
-
-    for line in open('subjects.txt'):
-
-        line = line.strip()
-
-        if line=='' or line is None:
-            continue
-
-        if line.startswith('====='):
-
-            top_subject = line[5:]
-        else:
-            subject_2_top[line.lower()] = top_subject
-
-            if ',' in line.lower():
-
-                for subj in line.split(','):
-
-                    subject_2_top[subj.lower()] = top_subject
-            if '&' in line.lower():
-
-                subject_2_top[line.replace('&','')] = top_subject
-
-    logging.info('%d subjects are loaded ..' % len(subject_2_top.keys()))
-
-    ## 所有论文的顶级subject
-    logging.info('paper top subjs ....')
-    nums_top_subjs  = []
-    _ids_top_subjs = {}
-    progress = 0
-    error_subjs = []
-
-    topsubj_num = defaultdict(int)
-    for _id in pid_subjects.keys():
-
-        progress+=1
-
-        if progress%1000000==0:
-
-            logging.info('progress %d/%d ...' %(progress,total_paper_num))
-
-        top_subjs = []
-        for subj in pid_subjects[_id]:
-
-            top_subj = subject_2_top.get(subj.strip().lower(),None)
-
-            if top_subj is None:
-                error_subjs.append(subj)
-                logging.info('error subj %s' % subj)
-            else:
-                top_subjs.append(top_subj)
-
-                topsubj_num[top_subj]+=1
+def stat_basic_attr():
+    fetch_subjects()
+    fetch_pubyear()
+    fetch_doctype()
+    fetch_teamsize()
 
 
-        top_subjs = list(set(top_subjs))
+def load_basic_data(isStat=False):
 
-        nums_top_subjs.append(len(top_subjs))
+    logging.info('======== LOADING BASIC DATA =============')
+    logging.info('======== ================== =============')
 
-        _ids_top_subjs[_id] = top_subjs
-    open('data/missing_subjects.txt','w').write('\n'.join(list(set(error_subjs))))
-
-    open('data/pid_topsubjs.json','w').write(json.dumps(_ids_top_subjs))
-    logging.info('pid_topsubjs.json saved')
-
-def fetch_pubyear():
-    pid_pubyear = {}
-    ## query database wos_summary
-    query_op = dbop()
-    sql = 'select id,pubyear from wos_core.wos_summary'
-    progress=0
-    for pid,pubyear in query_op.query_database(sql):
-        progress+=1
-        if progress%1000000==0:
-            logging.info('progress {:} ...'.format(progress))
-
-        pid_pubyear[pid] = pubyear
-
-    query_op.close_db()
-    logging.info('{:} cited ids have year'.format(len(pid_pubyear.keys())))
-
-    open('data/pid_pubyear.json','w').write(json.dumps(pid_pubyear))
-
-def fetch_doctype():
-    pid_doctype = {}
-    ## query database wos_summary
-    query_op = dbop()
-    sql = 'select id,doctype from wos_core.wos_doctypes'
-    progress=0
-    for pid,doctype in query_op.query_database(sql):
-        progress+=1
-        if progress%1000000==0:
-            logging.info('progress {:} ...'.format(progress))
-
-        pid_doctype[pid] = doctype
-
-    query_op.close_db()
-    saved_path = 'data/pid_doctype.json'
-    open(saved_path,'w').write(json.dumps(pid_doctype))
-
-
-def get_paper_teamsize():
-
-    sql = 'select id,name_id,addr_id from wos_core.wos_address_names'
-
-    pid_names = defaultdict(set)
-
-    query_op = dbop()
-    progress = 0
-    for _id,name_id,addr_id in query_op.query_database(sql):
-        progress+=1
-
-        if progress%1000000==0:
-            logging.info('progress {} ...'.format(progress))
-
-        pid_names[_id].add(name_id)
-
-        pid_ts = {}
-        for pid in pid_names:
-
-            pid_ts[pid] = len(pid_names)
-
-    open('data/pid_teamsize.json','w').write(json.dumps(pid_ts))
-    logging.info('{} data saved to data/pid_teamsize.json'.format(len(pid_ts)))
-
-
-
-def stat_basic_num():
 
     logging.info('loading paper pubyear ...')
     pid_pubyear = json.loads(open('data/pid_pubyear.json').read())
@@ -193,22 +55,134 @@ def stat_basic_num():
 
     logging.info('loading paper subjects ...')
     pid_subjects = json.loads(open('data/pid_subjects.json').read())
-    logging.info('{} papers has year label.'.format(len(pid_subjects.keys())))
+    logging.info('{} papers has subject label.'.format(len(pid_subjects.keys())))
 
     logging.info('loading paper top subjects ...')
     pid_topsubjs = json.loads(open('data/pid_topsubjs.json').read())
-    logging.info('{} papers has year label.'.format(len(pid_topsubjs.keys())))
+    logging.info('{} papers has top subject label.'.format(len(pid_topsubjs.keys())))
 
     logging.info('loading paper teamsize ...')
     pid_teamsize = json.loads(open('data/pid_teamsize.json').read())
-    logging.info('{} papers has year label.'.format(len(pid_teamsize.keys())))
+    logging.info('{} papers has teamsize label.'.format(len(pid_teamsize.keys())))
 
-    interset = set(pid_pubyear.keys())&set(pid_teamsize.keys())&set(pid_topsubjs.keys())&set(pid_topsubjs.keys())
+    if isStat:
+        interset = set(pid_pubyear.keys())&set(pid_teamsize.keys())&set(pid_topsubjs.keys())&set(pid_topsubjs.keys())
+        logging.info('{} papers has both four attrs.'.format(len(interset)))
 
-    logging.info('{} papers has both four attrs.'.format(len(interset)))
+    logging.info('======== LOADING BASIC DATA DONE =============')
+    logging.info('======== ======================= =============')
 
+    return pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize
+
+def stats_from_pid_cits():
+    
+    ##基础数据统计
+    pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
+
+    ## 学科间的相互引用
+    subj_refnum = defaultdict(int)
+    subj_subj_refnum = defaultdict(lambda:defaultdict(int))
+
+    topsubj_refnum = defaultdict(int)
+    topsubj_topsubj_refnum = defaultdict(lambda:defaultdict(int))
+
+    ## 非本地引文数量
+    subj_year_outrefnum = defaultdict(lambda:defaultdict(int))
+    topsubj_year_outrefnum = defaultdict(lambda:defaultdict(int))
+
+    subj_year_refnum = defaultdict(lambda:defaultdict(int))
+    topsubj_year_refnum = defaultdict(lambda:defaultdict(int))
+
+    ## 每篇论文随着时间的引用次数
+    pid_year_citnum = defaultdict(lambda:defaultdict(int))
+
+    progress = 0
+    lines = []
+    for line in open('data/pid_cits_ALL.txt'):
+
+        progress+=1
+        if progress%100000000==0:
+            logging.info('reading %d citation relations....' % progress)
+
+        line = line.strip()
+
+        pid,citing_id = line.split("\t")
+
+        cited_year = pid_pubyear.get(pid,None)
+
+        cited_subjs = pid_subjects.get(pid,None)
+
+        cited_topsubjs = pid_topsubjs.get(pid,None)
+
+        citing_year = pid_pubyear.get(citing_id,None)
+
+        citing_subjs = pid_subjects.get(citing_id,None)
+
+        citing_topsubjs = pid_topsubjs.get(citing_id,None)
+
+        ##如果引证文献没有数据 则略过
+        if citing_year is None or citing_subjs is None or citing_topsubjs is None:
+            continue
+
+        ## 被引论文可能是不再本地数据库中的论文
+        if cited_year is None or cited_subjs is None or cited_topsubjs is None:
+
+            for subj in citing_subjs:
+                subj_year_outrefnum[subj][citing_year]+=1
+
+            for topsubj in citing_topsubjs:
+                topsubj_year_outrefnum[topsubj][citing_year]+=1
+
+            continue
+
+        for subj in citing_subjs:
+            subj_year_refnum[subj][citing_year]+=1
+
+            subj_refnum[subj]+=1
+
+            for cited_subj in cited_subjs:
+                subj_subj_refnum[subj][cited_subj]+=1
+
+        for topsubj in citing_topsubjs:
+            topsubj_year_refnum[topsubj][citing_year]+=1
+
+            topsubj_refnum[topsubj]+=1
+
+            for cited_topsubj in cited_topsubjs:
+                topsubj_topsubj_refnum[topsubj][cited_topsubj]+=1
+
+        pid_year_citnum[pid][citing_year]+=1
+
+    open("data/pid_year_citnum.json",'w').write(json.dumps(pid_year_citnum))
+    logging.info('data saved to data/pid_year_citnum.json')
+
+    open("data/subj_refnum.json",'w').write(json.dumps(subj_refnum))
+    logging.info('data saved to data/subj_refnum.json')
+
+    open("data/subj_year_refnum.json",'w').write(json.dumps(subj_year_refnum))
+    logging.info('data saved to data/subj_year_refnum.json')
+
+    open("data/subj_year_outrefnum.json",'w').write(json.dumps(subj_year_outrefnum))
+    logging.info('data saved to data/subj_year_outrefnum.json')
+
+    open("data/topsubj_refnum.json",'w').write(json.dumps(topsubj_refnum))
+    logging.info('data saved to data/topsubj_refnum.json')
+
+    open("data/topsubj_year_refnum.json",'w').write(json.dumps(topsubj_year_refnum))
+    logging.info('data saved to data/topsubj_year_refnum.json')
+
+    open("data/topsubj_year_outrefnum.json",'w').write(json.dumps(topsubj_year_outrefnum))
+    logging.info('data saved to data/topsubj_year_outrefnum.json')
+
+    open("data/subj_subj_refnum.json",'w').write(json.dumps(subj_subj_refnum))
+    logging.info('data saved to data/subj_subj_refnum.json')
+
+    open("data/topsubj_topsubj_refnum.json",'w').write(json.dumps(topsubj_topsubj_refnum))
+    logging.info('data saved to data/topsubj_topsubj_refnum.json')
 
 
 if __name__ == '__main__':
-    stat_basic_num()
+    # stat_basic_num()
+
+    stats_from_pid_cits()
 
