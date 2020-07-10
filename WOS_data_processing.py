@@ -329,7 +329,7 @@ def plot_subj_sim_matrix():
 
         line = [subj1]
         for subj2 in sorted(subj_subj_sim.keys()):
-            line.append(subj_subj_sim[subj1][subj2])
+            line.append(str(subj_subj_sim[subj1][subj2]))
 
         tableLines.append('|{}|'.format('|'.join(line)))
 
