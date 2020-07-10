@@ -340,6 +340,72 @@ def plot_subj_sim_matrix():
     logging.info('data saved to sim_matrix.md')
 
 
+def stat_refs():
+
+    ##基础数据统计
+    pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
+    
+    ## 每篇论文随着时间的引用次数
+    pid_refs = defaultdict(list)
+
+    progress = 0
+    lines = []
+    for line in open('data/pid_cits_ALL.txt'):
+
+        progress+=1
+        if progress%100000000==0:
+            logging.info('reading %d citation relations....' % progress)
+
+        line = line.strip()
+
+        pid,citing_id = line.split("\t")
+
+        cited_year = pid_pubyear.get(pid,None)
+
+        cited_subjs = pid_subjects.get(pid,None)
+
+        cited_topsubjs = pid_topsubjs.get(pid,None)
+
+        citing_year = pid_pubyear.get(citing_id,None)
+
+        citing_subjs = pid_subjects.get(citing_id,None)
+
+        citing_topsubjs = pid_topsubjs.get(citing_id,None)
+
+        ##如果引证文献没有数据 则略过
+        if citing_year is None or citing_subjs is None or citing_topsubjs is None:
+            continue
+
+        ## 被引论文可能是不再本地数据库中的论文
+        if cited_year is None or cited_subjs is None or cited_topsubjs is None:
+            continue
+
+        pid_refs[citing_id].append(pid)
+
+    logging.info('there are {:,} paper has refs.'.format(len(pid_refs)))
+
+    ## 将论文的数据分为多个进行存储，每100000个存一行
+    saved_dict = {}
+    savenum = 0
+    out_path = 'data/pid_refs.txt'
+    of = open(out_path,'w')
+    for pid in pid_refs.keys():
+
+        saved_dict[pid] = pid_refs[pid]
+        savenum+=1
+
+        if savenum%100000==0:
+
+            of.write(json.dumps(saved_dict+'\n'))
+
+            saved_dict = {}
+
+    if len(saved_dict)>0:
+
+        of.write(json.dumps(saved_dict+'\n'))
+
+    of.close()
+    logging.info('data saved to {}.'.format(out_path))
 
 
 
@@ -353,7 +419,9 @@ if __name__ == '__main__':
     # subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
     # subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
 
-    plot_subj_sim_matrix()
+    # plot_subj_sim_matrix()
+
+    stat_refs()
 
 
 
