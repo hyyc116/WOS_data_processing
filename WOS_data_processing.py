@@ -216,15 +216,14 @@ def stat_and_visualize_data():
     tableLines = ['|year|{}|'.format('|'.join(sorted(list(allsubjs))))]
     tableLines.append('|:---:|{}|'.format('|'.join([':---:']*len(allsubjs))))
 
-    line = []
     for year in sorted(years,key=lambda x:int(x)):
-
+        line = []
         line.append(year)
         for subj in sorted(subj_year_num.keys()):
 
             line.append('{:,}'.format(subj_year_num[subj][year]))
 
-    tableLines.append('|{}|'.format('|'.join(line)))
+        tableLines.append('|{}|'.format('|'.join(line)))
 
     totalline = ['total']
 
