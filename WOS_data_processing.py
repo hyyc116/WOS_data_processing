@@ -307,7 +307,7 @@ def subj_sim_cal(data_path,out_path):
 
             sim = (R_ji+R_ij)/(np.sqrt((TC_i+TR_i)*(TC_j+TR_j)))
 
-            subj_subj_sim[subj][subj] = sim
+            subj_subj_sim[subj1][subj2] = sim
 
     open(out_path,'w').write(json.dumps(subj_subj_sim))
 
