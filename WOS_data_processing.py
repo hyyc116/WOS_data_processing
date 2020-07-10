@@ -286,6 +286,8 @@ def subj_sim_cal(data_path,out_path):
 
     subjs = subj_refT.keys()
 
+    print(subjs)
+
     subj_subj_sim = defaultdict(dict)
 
     for i in range(len(subjs)):
