@@ -408,6 +408,39 @@ def stat_refs():
     logging.info('data saved to {}.'.format(out_path))
 
 
+def stat_paper_cN():
+
+    logging.info('loading data pid year citenum ....')
+    pid_year_citnum = json.loads(open("data/pid_year_citnum.json").read())
+
+    logging.info('loading paper pubyear ...')
+    pid_pubyear = json.loads(open('data/pid_pubyear.json').read())
+    logging.info('{} papers has year label.'.format(len(pid_pubyear.keys())))
+
+    pid_c5 = defaultdict(int)
+
+    pid_c10 = defaultdict(int)
+
+    for pid in pid_year_citnum.keys():
+
+        pubyear = int(pid_pubyear[pid])
+
+        for year in pid_year_citnum[pid].keys():
+
+            if int(year)-int(pubyear)<=5:
+
+                pid_c5[pid]+=pid_year_citnum[pid][year]
+
+            if int(year)-int(pubyear)<=10:
+                pid_c10[pid]+=pid_year_citnum[pid][year]
+
+    open('data/pid_c5.json','w').write(json.dumps(pid_c5))
+    logging.info('data saved to data/pid_c5.json')
+
+
+    open('data/pid_c10.json','w').write(json.dumps(pid_c10))
+    logging.info('data saved to data/pid_c10.json')
+
 
 if __name__ == '__main__':
     # stat_basic_num()
@@ -421,7 +454,9 @@ if __name__ == '__main__':
 
     # plot_subj_sim_matrix()
 
-    stat_refs()
+    # stat_refs()
+
+    stat_paper_cN()
 
 
 
