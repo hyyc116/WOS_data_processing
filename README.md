@@ -130,13 +130,9 @@
 |2018|0|120|145|148|110|3|
 |total|5,361,562|16,493,933|17,869,205|20,368,543|18,053,623|9,814,173|
 
+### 领域论文数量随时间变化图
 
-
-
-
-
-
-
+![领域论文数量变化曲线](fig/subj_year_num.png)
 
 
 ## 领域相似度
@@ -145,9 +141,10 @@
 
 $S_{ij} = \frac{R_{ij}+R_{j_i}}{\sqrt{(TC_{i}+TR_{i})(TC_{j}+TR_{j})}}$
 
-![](http://latex.codecogs.com/gif.latex?S_{ij}=\frac{R_{ij}+R_{j_i}}{\sqrt{(TC_{i}+TR_{i})(TC_{j}+TR_{j})}})
+![相似度计算公式](http://latex.codecogs.com/gif.latex?S_{ij}=\frac{R_{ij}+R_{j_i}}{\sqrt{(TC_{i}+TR_{i})(TC_{j}+TR_{j})}})
 
 ### 领域相似度矩阵
+
 
 
 
