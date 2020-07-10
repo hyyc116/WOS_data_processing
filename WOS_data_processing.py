@@ -243,7 +243,7 @@ def stat_and_visualize_data():
 
     for subj in sorted(subj_year_num.keys()):
 
-        year_num = subj_paper_num[subj]
+        year_num = subj_year_num[subj]
 
         xs = []
         ys = []
@@ -318,7 +318,7 @@ if __name__ == '__main__':
 
     # stats_from_pid_cits()
 
-    # stat_and_visualize_data()
+    stat_and_visualize_data()
 
     subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
     subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
