@@ -306,6 +306,7 @@ def subj_sim_cal(data_path,out_path):
             TC_j = subj_citT[subj2]
 
             sim = (R_ji+R_ij)/(np.sqrt((TC_i+TR_i)*(TC_j+TR_j)))
+            print(subj1,subj2,sim,R_ij,R_ji,TR_i,TC_i,TR_j,TC_j)
 
             subj_subj_sim[subj1][subj2] = sim
 
