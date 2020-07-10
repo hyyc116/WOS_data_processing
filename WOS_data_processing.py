@@ -181,8 +181,98 @@ def stats_from_pid_cits():
     logging.info('data saved to data/topsubj_topsubj_refnum.json')
 
 
+##对一些数据进行统计和可视化
+def stat_and_visualize_data():
+
+    ## 各领域的论文数量及随时间的变化曲线
+    pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
+
+    subj_year_num = defaultdict(lambda:defaultdict(int))
+
+    subj_totalnum = defaultdict(int)
+
+    years = set([])
+    subjs = set([])
+
+    for pid in pid_pubyear:
+
+        subjs = pid_topsubjs.get(pid,None)
+
+        pubyear = pid_pubyear[pid]
+
+        years.add(pubyear)
+
+        if subjs is None:
+            continue
+
+        for subj in subjs:
+
+            subjs.add(subj)
+
+            subj_year_num[subj][pubyear]+=1
+
+            subj_totalnum[subj]+=1
+
+    tableLines = ['|year|{}|'.format('|'.join(sorted(list(subjs))))]
+    tableLines.append('|:---:|{}|'.format('|'.join([':---:']*len(subjs))))
+
+    line = []
+    for year in sorted(years,key=lambda x:int(x)):
+
+        line.append(year)
+        for subj in sorted(subj_year_num.keys()):
+
+            line.append('{:,}'.format(subj_year_num[subj][year]))
+
+    tableLines.append('|{}|'.format('|'.join(line)))
+
+    totalline = ['total']
+
+    for subj in sorted(subj_totalnum.keys()):
+        totalline.append('{:,}'.format(subj_totalnum[subj]))
+
+    tableLines.append('|{}|'.format('|'.join(totalline)))
+
+
+    open("subj_paper_num.md",'w').write('\n'.join(tableLines))
+
+    logging.info('paper num saved to subj_paper_num.md')
+
+
+    plt.figure(figsize=(7,5))
+
+    for subj in sorted(subj_year_num.keys()):
+
+        year_num = subj_paper_num[subj]
+
+        xs = []
+        ys = []
+
+        for year in sorted(year_num.keys(),key=lambda x:int(x)):
+
+            xs.append(int(year))
+            ys.append(year_num[year])
+
+        plt.plot(xs,ys,label=subj)
+
+
+    plt.yscale('log')
+
+    plt.xlabel('year')
+
+    plt.ylabel('number of publications')
+
+    plt.tight_layout()
+
+    plt.savefig('fig/subj_year_num.png',dpi=400)
+
+    logging.info('fig saved to fig/subj_year_num.png。')
+
+
 if __name__ == '__main__':
     # stat_basic_num()
 
-    stats_from_pid_cits()
+    # stats_from_pid_cits()
+
+    stat_and_visualize_data()
 
