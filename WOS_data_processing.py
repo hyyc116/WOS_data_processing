@@ -396,13 +396,13 @@ def stat_refs():
 
         if savenum%100000==0:
 
-            of.write(json.dumps(saved_dict+'\n'))
+            of.write(json.dumps(saved_dict)+'\n')
 
             saved_dict = {}
 
     if len(saved_dict)>0:
 
-        of.write(json.dumps(saved_dict+'\n'))
+        of.write(json.dumps(saved_dict)+'\n')
 
     of.close()
     logging.info('data saved to {}.'.format(out_path))
