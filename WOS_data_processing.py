@@ -319,7 +319,7 @@ def plot_subj_sim_matrix():
     subj_subj_sim = json.loads(open('data/topsubj_topsubj_sim.json').read())
 
     tableLines = []
-    header = '|subj|{}|'.format('|'.join(subj_subj_sim.keys()))
+    header = '|subj|{}|'.format('|'.join(sorted(subj_subj_sim.keys())))
     header2 = '|:---:|{}|'.format('|'.join([':---:']*len(subj_subj_sim.keys())))
 
     tableLines.append(header)
