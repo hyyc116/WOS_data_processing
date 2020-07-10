@@ -285,7 +285,7 @@ def subj_sim_cal(data_path,out_path):
             subj_refT[subj]+=refnum
             subj_citT[cited_subj]+=refnum
 
-    subjs = subj_refT.keys():
+    subjs = subj_refT.keys()
 
     subj_subj_sim = defaultdict(dict)
 
