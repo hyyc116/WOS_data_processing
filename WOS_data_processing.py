@@ -266,7 +266,51 @@ def stat_and_visualize_data():
 
     plt.savefig('fig/subj_year_num.png',dpi=400)
 
-    logging.info('fig saved to fig/subj_year_num.png。')
+    logging.info('fig saved to fig/subj_year_num.png.')
+
+
+def subj_sim_cal(data_path,out_path):
+
+    subj_subj_refnum = json.loads(open(data_path).read())
+
+    subj_refT = defaultdict(int)
+    subj_citT = defaultdict(int) 
+
+    for subj in subj_subj_refnum.keys():
+
+        for cited_subj in subj_subj_refnum[subj].keys():
+
+            refnum = subj_subj_refnum[subj][cited_subj]
+
+            subj_refT[subj]+=refnum
+            subj_citT[cited_subj]+=refnum
+
+    subjs = subj_refT.keys():
+
+    subj_subj_sim = defaultdict(dict)
+
+    for i in range(len(subjs)):
+        subj1 = subjs[i]
+        for j in range(i+1,len(subjs)):
+
+            subj2 = subjs[2]
+
+            R_ij = subj_subj_refnum[subj1][subj2]
+            R_ji = subj_subj_refnum[subj2][subj2]
+
+            TR_i = subj_refT[subj1]
+            TR_j = subj_refT[subj2]
+
+            TC_i = subj_citT[subj1]
+            TC_j = subj_citT[subj2]
+
+            sim = (R_ji+R_ij)/(np.sqrt((TC_i+TR_i)*(TC_j+TR_j)))
+
+            subj_subj_sim[subj][subj] = sim
+
+    open(out_path,'w').write(json.dumps(subj_subj_sim))
+
+    logging.info('data saved to {}.'.format(out_path))
 
 
 if __name__ == '__main__':
@@ -274,5 +318,10 @@ if __name__ == '__main__':
 
     # stats_from_pid_cits()
 
-    stat_and_visualize_data()
+    # stat_and_visualize_data()
+
+    subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
+    subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
+
+
 
