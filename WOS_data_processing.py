@@ -296,8 +296,8 @@ def subj_sim_cal(data_path,out_path):
 
             subj2 = subjs[j]
 
-            R_ij = subj_subj_refnum[subj1][subj2]
-            R_ji = subj_subj_refnum[subj2][subj2]
+            R_ij = subj_subj_refnum[subj1].get(subj2,0)
+            R_ji = subj_subj_refnum[subj2].get(subj1,0)
 
             TR_i = subj_refT[subj1]
             TR_j = subj_refT[subj2]
@@ -321,8 +321,8 @@ if __name__ == '__main__':
 
     # stat_and_visualize_data()
 
-    # subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
-    subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
+    subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
+    # subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
 
 
 
