@@ -1,4 +1,4 @@
-|subj|Life Sciences|Engineering & Technology|Arts & Humanities|Clinical, Pre-Clinical & Health|Physical Sciences|Social Sciences|
+|subj|Arts & Humanities|Clinical, Pre-Clinical & Health|Engineering & Technology|Life Sciences|Physical Sciences|Social Sciences|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 |Arts & Humanities|0.439570694332|1.69961153383|1.43359822153|2.59548156855|2.42874157192|1.08129721181|
 |Clinical, Pre-Clinical & Health|0.0351172078504|0.492204791827|0.260500917791|0.491499789959|0.367945031501|0.194401953622|
