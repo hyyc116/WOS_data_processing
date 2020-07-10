@@ -294,7 +294,7 @@ def subj_sim_cal(data_path,out_path):
         subj1 = subjs[i]
         for j in range(i+1,len(subjs)):
 
-            subj2 = subjs[2]
+            subj2 = subjs[j]
 
             R_ij = subj_subj_refnum[subj1][subj2]
             R_ji = subj_subj_refnum[subj2][subj2]
