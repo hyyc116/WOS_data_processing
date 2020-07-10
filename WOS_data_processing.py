@@ -314,6 +314,34 @@ def subj_sim_cal(data_path,out_path):
     logging.info('data saved to {}.'.format(out_path))
 
 
+def plot_subj_sim_matrix():
+
+    subj_subj_sim = json.loads(open('data/subj_subj_sim.json').read())
+
+    tableLines = []
+    header = '|subj|{}|'.format('|'.join(subj_subj_sim.keys()))
+    header2 = '|:---:|{}|'.format('|'.join([':---:']*len(subj_subj_sim.keys())))
+
+    tableLines.append(header)
+    tableLines.append(header2)
+
+    for subj1 in sorted(subj_subj_sim.keys()):
+
+        line = [subj1]
+        for subj2 in sorted(subj_subj_sim.keys()):
+            line.append(subj_subj_sim[subj1][subj2])
+
+        tableLines.append('|{}|'.join('|'.join(line)))
+
+
+    open('sim_matrix.md','w').write('\n'.join(tableLines))
+
+    logging.info('data saved to sim_matrix.md')
+
+
+
+
+
 if __name__ == '__main__':
     # stat_basic_num()
 
@@ -321,8 +349,10 @@ if __name__ == '__main__':
 
     # stat_and_visualize_data()
 
-    subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
+    # subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
     # subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
+
+    plot_subj_sim_matrix()
 
 
 
