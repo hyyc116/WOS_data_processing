@@ -292,7 +292,7 @@ def subj_sim_cal(data_path,out_path):
 
     for i in range(len(subjs)):
         subj1 = subjs[i]
-        for j in range(i+1,len(subjs)):
+        for j in range(len(subjs)):
 
             subj2 = subjs[j]
 
