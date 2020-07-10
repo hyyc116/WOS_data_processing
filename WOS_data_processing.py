@@ -192,7 +192,7 @@ def stat_and_visualize_data():
     subj_totalnum = defaultdict(int)
 
     years = set([])
-    subjs = set([])
+    allsubjs = set([])
 
     for pid in pid_pubyear:
 
@@ -207,14 +207,14 @@ def stat_and_visualize_data():
 
         for subj in subjs:
 
-            subjs.add(subj)
+            allsubjs.add(subj)
 
             subj_year_num[subj][pubyear]+=1
 
             subj_totalnum[subj]+=1
 
-    tableLines = ['|year|{}|'.format('|'.join(sorted(list(subjs))))]
-    tableLines.append('|:---:|{}|'.format('|'.join([':---:']*len(subjs))))
+    tableLines = ['|year|{}|'.format('|'.join(sorted(list(allsubjs))))]
+    tableLines.append('|:---:|{}|'.format('|'.join([':---:']*len(allsubjs))))
 
     line = []
     for year in sorted(years,key=lambda x:int(x)):
