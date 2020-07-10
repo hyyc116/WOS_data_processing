@@ -20,9 +20,9 @@
 
 ### 相似度计算公式
 
-    $S_{ij} = \frac{R_{ij}+R_{j_i}}{\sqrt{(TC_{i}+TR_{i})(TC_{j}+TR_{j})}}$
+$S_{ij} = \frac{R_{ij}+R_{j_i}}{\sqrt{(TC_{i}+TR_{i})(TC_{j}+TR_{j})}}$
 
-    ![](http://latex.codecogs.com/gif.latex?S_{ij} = \frac{R_{ij}+R_{j_i}}{\sqrt{(TC_{i}+TR_{i})(TC_{j}+TR_{j})}})
+![](http://latex.codecogs.com/gif.latex?S_{ij}=\frac{R_{ij}+R_{j_i}}{\sqrt{(TC_{i}+TR_{i})(TC_{j}+TR_{j})}})
 
 ### 领域相似度矩阵
 
