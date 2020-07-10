@@ -316,7 +316,7 @@ def subj_sim_cal(data_path,out_path):
 
 def plot_subj_sim_matrix():
 
-    subj_subj_sim = json.loads(open('data/subj_subj_sim.json').read())
+    subj_subj_sim = json.loads(open('data/topsubj_topsubj_sim.json').read())
 
     tableLines = []
     header = '|subj|{}|'.format('|'.join(subj_subj_sim.keys()))
