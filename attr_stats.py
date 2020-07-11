@@ -39,7 +39,7 @@ def citation_distribution():
 
             ys.append(subj_cit_dis[subj][cit])
 
-        ys = [np.sum(ys[i:])/np.sum(ys) for i in range(ys)]
+        ys = [np.sum(ys[i:])/np.sum(ys) for i in range(len(ys))]
 
         plt.plot(xs,ys,label=subj)
 
