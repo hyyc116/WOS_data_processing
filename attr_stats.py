@@ -6,6 +6,7 @@ from WOS_data_processing import load_basic_data
 
 def citation_distribution():
 
+    logging.info('loading pid cn json ...')
     pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
 
     pid_cn = json.loads(open('data/pid_cn.json').read())
