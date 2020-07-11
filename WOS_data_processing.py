@@ -34,7 +34,7 @@
 
 from basic_config import *
 
-from basic_attr_fecther import *
+from basic_attr_fetcher import *
 
 def stat_basic_attr():
     fetch_subjects()
