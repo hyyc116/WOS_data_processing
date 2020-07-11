@@ -131,8 +131,8 @@ def reference_distribution():
         plt.plot(xs,ys,label=subj)
 
 
-    plt.xscale('log')
-    plt.yscale('log')
+    # plt.xscale('log')
+    # plt.yscale('log')
 
     plt.xlabel('number of references')
 
@@ -150,7 +150,6 @@ def reference_distribution():
 
 if __name__ == '__main__':
     reference_distribution()
-
     citation_distribution()
 
 
