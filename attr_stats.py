@@ -138,6 +138,8 @@ def reference_distribution():
 
 
 if __name__ == '__main__':
-    reference_distribution()
+    # reference_distribution()
+
+    citation_distribution()
 
 
