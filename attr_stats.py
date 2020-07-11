@@ -6,11 +6,13 @@ from WOS_data_processing import load_basic_data
 
 def citation_distribution():
 
-    logging.info('loading pid cn json ...')
+    logging.info('loading attrs ...')
     pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
 
     logging.info('loading pid cn ...')
     pid_cn = json.loads(open('data/pid_cn.json').read())
+
+    logging.info('{} paper citations loaded.'.format(len(pid_cn.keys())))
 
     subj_cit_dis = defaultdict(lambda:defaultdict(int))
 
@@ -20,30 +22,29 @@ def citation_distribution():
 
         pubyear = int(pid_pubyear[pid])
 
+        cn = pid_cn[pid]
+
         for subj in pid_topsubjs[pid]:
 
-            subj_cit_dis[subj][pid_cn[pid]]+=1
-
-            subj_year_cits[subj][pubyear].append(pid_cn[pid])
+            subj_cit_dis[subj][cn]+=1
+            subj_year_cits[subj][pubyear].append(cn)
 
 
     ##画出各个学科的ccdf分布
 
     plt.figure(figsize=(7,5))
-
     for subj in sorted(subj_cit_dis.keys()):
 
         xs = []
         ys = []
         for cit in sorted(subj_cit_dis[subj].keys()):
-
             xs.append(cit)
-
             ys.append(subj_cit_dis[subj][cit])
 
-        ys = [np.sum(ys[i:])/np.sum(ys) for i in range(len(ys))]
+        ys = [np.sum(ys[i:])/float(np.sum(ys)) for i in range(len(ys))]
 
         plt.plot(xs,ys,label=subj)
+
 
 
     plt.xlabel('number of citations')
@@ -81,6 +82,8 @@ def citation_distribution():
 
         plt.plot(xs,ys,label=subj)
 
+    plt.plot([2004]*10,np.linspace(1,42),'--',label='$x=2004$')
+
     plt.xlabel('year')
 
     plt.ylabel('average number of citations')
@@ -90,7 +93,7 @@ def citation_distribution():
 
     plt.tight_layout()
 
-    plt.savefig('data/subj_year_averagecn.png',dpi=400)
+    plt.savefig('fig/subj_year_averagecn.png',dpi=400)
 
     logging.info('fig saved to fig/subj_year_averagecn.png.')
 
@@ -199,9 +202,9 @@ def reference_distribution():
 
 
 if __name__ == '__main__':
-    # citation_distribution()
+    citation_distribution()
 
-    reference_distribution()
+    # reference_distribution()
 
 
 
