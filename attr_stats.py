@@ -195,9 +195,9 @@ def reference_distribution():
 
 
 if __name__ == '__main__':
-    citation_distribution()
+    # citation_distribution()
 
-    # reference_distribution()
+    reference_distribution()
 
 
 
