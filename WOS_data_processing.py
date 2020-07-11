@@ -467,9 +467,9 @@ if __name__ == '__main__':
 
     # plot_subj_sim_matrix()
 
-    # stat_refs()
+    stat_refs()
 
-    stat_paper_cN()
+    # stat_paper_cN()
 
 
 
