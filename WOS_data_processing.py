@@ -348,6 +348,8 @@ def stat_refs():
     ## 每篇论文随着时间的引用次数
     pid_refs = defaultdict(list)
 
+    pid_refnum = defaultdict(int)
+
     progress = 0
     lines = []
     for line in open('data/pid_cits_ALL.txt'):
@@ -359,6 +361,8 @@ def stat_refs():
         line = line.strip()
 
         pid,citing_id = line.split("\t")
+
+        pid_refnum[citing_id]+=1
 
         cited_year = pid_pubyear.get(pid,None)
 
@@ -383,6 +387,8 @@ def stat_refs():
         pid_refs[citing_id].append(pid)
 
     logging.info('there are {:,} paper has refs.'.format(len(pid_refs)))
+
+    open('data/pid_refnum.json','w').write(json.dumps(pid_refnum))
 
     ## 将论文的数据分为多个进行存储，每100000个存一行
     saved_dict = {}
