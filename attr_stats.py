@@ -52,6 +52,8 @@ def citation_distribution():
 
     plt.yscale('log')
 
+    plt.legend()
+
     plt.tight_layout()
 
     plt.savefig('fig/subj_cit_dis.png',dpi=400)
@@ -81,6 +83,7 @@ def citation_distribution():
 
     plt.ylabel('average number of citations')
 
+    plt.legend()
     # plt.yscale('l)
 
     plt.tight_layout()
@@ -129,8 +132,15 @@ def reference_distribution():
 
 
     plt.xscale('log')
+    plt.yscale('log')
+
     plt.xlabel('number of references')
+
+    plt.xlim(1,200)
+    # plt.ylim()
     plt.ylabel('percentage')
+
+    plt.legend()
 
     plt.tight_layout()
     plt.savefig('fig/subj_refnum_dis.png',dpi=400)
