@@ -34,7 +34,7 @@
 
 from basic_config import *
 
-from basic_attr_stats import *
+from basic_attr_fecther import *
 
 def stat_basic_attr():
     fetch_subjects()
@@ -421,6 +421,8 @@ def stat_paper_cN():
 
     pid_c10 = defaultdict(int)
 
+    pid_cn = defaultdict(int)
+
     for pid in pid_year_citnum.keys():
 
         pubyear = int(pid_pubyear[pid])
@@ -434,12 +436,17 @@ def stat_paper_cN():
             if int(year)-int(pubyear)<=10:
                 pid_c10[pid]+=pid_year_citnum[pid][year]
 
+            pid_cn[pid]+=pid_year_citnum[pid][year]
+
     open('data/pid_c5.json','w').write(json.dumps(pid_c5))
     logging.info('data saved to data/pid_c5.json')
 
 
     open('data/pid_c10.json','w').write(json.dumps(pid_c10))
     logging.info('data saved to data/pid_c10.json')
+
+    open('data/pid_cn.json','w').write(json.dumps(pid_cn))
+    logging.info('data saved to data/pid_cn.json')
 
 
 if __name__ == '__main__':
