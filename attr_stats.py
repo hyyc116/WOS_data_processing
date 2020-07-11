@@ -110,6 +110,10 @@ def reference_distribution():
     ## 统计每一个学科 数据集内的引用次数分布
     subj_refnum_dis = defaultdict(lambda:defaultdict(int))
     for pid in pid_refnum.keys():
+
+        if pid_topsubjs.get(pid,None) is None:
+            continue
+
         for subj in pid_topsubjs[pid]:
             subj_refnum_dis[subj][pid_refnum[pid]]+=1
 
