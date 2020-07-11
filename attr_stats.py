@@ -82,7 +82,7 @@ def citation_distribution():
 
         plt.plot(xs,ys,label=subj)
 
-    plt.plot([2004]*10,np.linspace(1,42),'--',label='$x=2004$')
+    plt.plot([2004]*10,np.linspace(1,42,10),'--',label='$x=2004$')
 
     plt.xlabel('year')
 
