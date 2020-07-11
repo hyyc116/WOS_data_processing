@@ -129,16 +129,17 @@ def reference_distribution():
 
 
     plt.xscale('log')
-    plt.xlabel('number of citations')
+    plt.xlabel('number of references')
     plt.ylabel('percentage')
 
     plt.tight_layout()
     plt.savefig('fig/subj_refnum_dis.png',dpi=400)
+    logging.info('fig saved to fig/subj_refnum_dis.png')
 
 
 
 if __name__ == '__main__':
-    # reference_distribution()
+    reference_distribution()
 
     citation_distribution()
 
