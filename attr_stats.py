@@ -27,7 +27,7 @@ def citation_distribution():
 
     ##画出各个学科的ccdf分布
 
-    plt.figure(figsize=(6,5))
+    plt.figure(figsize=(7,5))
 
     for subj in sorted(subj_cit_dis.keys()):
 
@@ -62,7 +62,7 @@ def citation_distribution():
 
     ### 画出各学科平均引用次数随时间的变化
 
-    plt.figure(figsize=(6,5))
+    plt.figure(figsize=(7,5))
 
     for subj in sorted(subj_year_cits.keys()):
 
@@ -114,7 +114,7 @@ def reference_distribution():
         for subj in pid_topsubjs[pid]:
             subj_refnum_dis[subj][len(pid_refs[pid])]+=1
 
-    plt.figure(figsize=(6,5))
+    plt.figure(figsize=(7,5))
     ##将每一个学科的ref_dis画出来
     for subj in sorted(subj_refnum_dis.keys()):
 
