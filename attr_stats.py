@@ -2,6 +2,96 @@
 
 from basic_config import *
 
+from WOS_data_processing import load_basic_data
+
+def citation_distribution():
+
+    pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
+
+    pid_cn = json.loads(open('data/pid_cn.json').read())
+
+    subj_cit_dis = defaultdict(lambda:defaultdict(int))
+
+    subj_year_cits = defaultdict(lambda:defaultdict(list))
+
+    for pid in pid_cn.keys():
+
+        pubyear = int(pid_pubyear[pid])
+
+        for subj in pid_topsubjs[pid]:
+
+            subj_cit_dis[subj][pid_cn[pid]]+=1
+
+            subj_year_cits[subj][pubyear].append(pid_cn[pid])
+
+
+    ##画出各个学科的ccdf分布
+
+    plt.figure(figsize=(6,5))
+
+    for subj in sorted(subj_cit_dis.keys()):
+
+        xs = []
+        ys = []
+        for cit in sorted(subj_cit_dis[subj].keys()):
+
+            xs.append(cit)
+
+            ys.append(subj_cit_dis[subj][cit])
+
+        ys = [np.sum(ys[i:])/np.sum(ys) for i in range(ys)]
+
+        plt.plot(xs,ys,label=subj)
+
+
+    plt.xlabel('number of citations')
+
+    plt.ylabel('percentage')
+
+    plt.xscale('log')
+
+    plt.yscale('log')
+
+    plt.tight_layout()
+
+    plt.savefig('fig/subj_cit_dis.png',dpi=400)
+    logging.info('fig saved to fig/subj_cit_dis.png.')
+
+
+    ### 画出各学科平均引用次数随时间的变化
+
+    plt.figure(figsize=(6,5))
+
+    for subj in sorted(subj_year_cits.keys()):
+
+        xs = []
+        ys = []
+
+        for year in sorted(subj_year_cits[subj].keys()):
+
+            avgC = np.mean(subj_year_cits[subj][year])
+
+            xs.append(year)
+            ys.append(avgC)
+
+
+        plt.plot(xs,ys,label=subj)
+
+    plt.xlabel('year')
+
+    plt.ylabel('average number of citations')
+
+    # plt.yscale('l)
+
+    plt.tight_layout()
+
+    plt.savefig('data/subj_year_averagecn.png',dpi=400)
+
+    logging.info('fig saved to fig/subj_year_averagecn.png.')
+
+
+
+
 def reference_distribution():
 
     logging.info('loading paper subjects ...')
@@ -44,7 +134,6 @@ def reference_distribution():
 
     plt.tight_layout()
     plt.savefig('fig/subj_refnum_dis.png',dpi=400)
-
 
 
 

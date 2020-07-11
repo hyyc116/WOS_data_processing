@@ -84,6 +84,15 @@
 
 ![领域论文数量变化曲线](fig/subj_year_num.png)
 
+### 领域引用次数分布
+![领域论文数量变化曲线](fig/subj_cit_dis.png)
+
+### 领域平均引用次数随时间的变化
+![领域论文数量变化曲线](fig/subj_year_averagecn.png)
+
+### 各领域本地参考文献数量分布
+![领域论文数量变化曲线](fig/subj_refnum_dis.png)
+
 
 ## 领域相似度
 

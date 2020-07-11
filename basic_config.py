@@ -38,7 +38,7 @@ import statsmodels.api as sm
 lowess = sm.nonparametric.lowess
 import scipy
 
-plt.style.use('ggplot')
+# plt.style.use('ggplot')
 
 # from gini import gini
 
