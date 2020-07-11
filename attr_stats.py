@@ -9,6 +9,7 @@ def citation_distribution():
     logging.info('loading pid cn json ...')
     pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
 
+    logging.info('loading pid cn ...')
     pid_cn = json.loads(open('data/pid_cn.json').read())
 
     subj_cit_dis = defaultdict(lambda:defaultdict(int))
@@ -102,6 +103,50 @@ def reference_distribution():
     pid_topsubjs = json.loads(open('data/pid_topsubjs.json').read())
     logging.info('{} papers has subject label.'.format(len(pid_topsubjs.keys())))
 
+
+    pid_refnum = json.loads(open('data/pid_refnum.json').read())
+
+
+    ## 统计每一个学科 数据集内的引用次数分布
+    subj_refnum_dis = defaultdict(lambda:defaultdict(int))
+    for pid in pid_refnum.keys():
+        for subj in pid_topsubjs[pid]:
+            subj_refnum_dis[subj][pid_refnum[pid]]+=1
+
+    plt.figure(figsize=(7,5))
+    ##将每一个学科的ref_dis画出来
+    for subj in sorted(subj_refnum_dis.keys()):
+
+        xs = []
+        ys = []
+
+        for refnum in sorted(subj_refnum_dis[subj].keys()):
+
+            xs.append(refnum)
+            ys.append(subj_refnum_dis[subj][refnum])
+
+        ys = np.array(ys)/float(np.sum(ys))
+
+        plt.plot(xs,ys,label=subj)
+
+
+    plt.xscale('log')
+    # plt.yscale('log')
+
+    plt.xlabel('number of references')
+
+    plt.xlim(0.9,200)
+    # plt.ylim()
+    plt.ylabel('percentage')
+
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig('fig/subj_all_refnum_dis.png',dpi=400)
+    logging.info('fig saved to fig/subj_all_refnum_dis.png')
+
+
+
     pid_refs = {}
 
     for line in open('data/pid_refs.txt'):
@@ -132,12 +177,12 @@ def reference_distribution():
         plt.plot(xs,ys,label=subj)
 
 
-    # plt.xscale('log')
+    plt.xscale('log')
     # plt.yscale('log')
 
     plt.xlabel('number of references')
 
-    plt.xlim(1,200)
+    plt.xlim(0.9,200)
     # plt.ylim()
     plt.ylabel('percentage')
 
@@ -150,7 +195,9 @@ def reference_distribution():
 
 
 if __name__ == '__main__':
-    reference_distribution()
     citation_distribution()
+
+    # reference_distribution()
+
 
 
