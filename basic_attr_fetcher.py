@@ -141,11 +141,13 @@ def fetch_teamsize():
 
         pid_names[_id].add(name_id)
 
-        pid_ts = {}
-        for pid in pid_names:
-
-            pid_ts[pid] = len(pid_names)
+    pid_ts = {}
+    for pid in pid_names:
+        pid_ts[pid] = len(pid_names[pid])
 
     open('data/pid_teamsize.json','w').write(json.dumps(pid_ts))
     logging.info('{} data saved to data/pid_teamsize.json'.format(len(pid_ts)))
+
+if __name__ == '__main__':
+    fetch_teamsize()
 
