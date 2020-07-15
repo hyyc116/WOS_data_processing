@@ -1,5 +1,7 @@
 #coding:utf-8
 
+from basic_config import *
+
 def fetch_subjects():
     pid_subjects = defaultdict(list)
     ## query database wos_summary
