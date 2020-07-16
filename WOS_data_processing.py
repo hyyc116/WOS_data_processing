@@ -425,6 +425,8 @@ def stat_paper_cN():
     pid_pubyear = json.loads(open('data/pid_pubyear.json').read())
     logging.info('{} papers has year label.'.format(len(pid_pubyear.keys())))
 
+    pid_c2 = defaultdict(int)
+
     pid_c5 = defaultdict(int)
 
     pid_c10 = defaultdict(int)
@@ -437,6 +439,10 @@ def stat_paper_cN():
 
         for year in pid_year_citnum[pid].keys():
 
+            if int(year)-int(pubyear)<=2:
+
+                pid_c2[pid]+=pid_year_citnum[pid][year]
+
             if int(year)-int(pubyear)<=5:
 
                 pid_c5[pid]+=pid_year_citnum[pid][year]
@@ -446,9 +452,11 @@ def stat_paper_cN():
 
             pid_cn[pid]+=pid_year_citnum[pid][year]
 
+    open('data/pid_c2.json','w').write(json.dumps(pid_c5))
+    logging.info('data saved to data/pid_c2.json')
+
     open('data/pid_c5.json','w').write(json.dumps(pid_c5))
     logging.info('data saved to data/pid_c5.json')
-
 
     open('data/pid_c10.json','w').write(json.dumps(pid_c10))
     logging.info('data saved to data/pid_c10.json')
@@ -462,7 +470,7 @@ if __name__ == '__main__':
 
     # stats_from_pid_cits()
 
-    stat_and_visualize_data()
+    # stat_and_visualize_data()
 
     # subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
     # subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
@@ -471,7 +479,7 @@ if __name__ == '__main__':
 
     # stat_refs()
 
-    # stat_paper_cN()
+    stat_paper_cN()
 
 
 
