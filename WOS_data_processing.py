@@ -452,7 +452,7 @@ def stat_paper_cN():
 
             pid_cn[pid]+=pid_year_citnum[pid][year]
 
-    open('data/pid_c2.json','w').write(json.dumps(pid_c5))
+    open('data/pid_c2.json','w').write(json.dumps(pid_c2))
     logging.info('data saved to data/pid_c2.json')
 
     open('data/pid_c5.json','w').write(json.dumps(pid_c5))
