@@ -108,6 +108,9 @@ def stats_from_pid_cits():
 
         pid,citing_id = line.split("\t")
 
+        if pid==citing_id:
+            continue
+
         cited_year = pid_pubyear.get(pid,None)
 
         cited_subjs = pid_subjects.get(pid,None)
@@ -386,6 +389,9 @@ def stat_refs():
         if cited_year is None or cited_subjs is None or cited_topsubjs is None:
             continue
 
+        if citing_id==pid:
+            continue
+
         pid_refs[citing_id].append(pid)
 
     logging.info('there are {:,} paper has refs.'.format(len(pid_refs)))
@@ -468,18 +474,18 @@ def stat_paper_cN():
 if __name__ == '__main__':
     # stat_basic_num()
 
-    # stats_from_pid_cits()
+    stats_from_pid_cits()
 
-    # stat_and_visualize_data()
+    stat_and_visualize_data()
 
-    # subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
-    # subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
+    subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
+    subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
 
-    # plot_subj_sim_matrix()
+    plot_subj_sim_matrix()
 
     stat_refs()
 
-    # stat_paper_cN()
+    stat_paper_cN()
 
 
 
