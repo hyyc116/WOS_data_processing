@@ -399,7 +399,7 @@ def stat_refs():
     of = open(out_path,'w')
     for pid in pid_refs.keys():
 
-        saved_dict[pid] = pid_refs[pid]
+        saved_dict[pid] = list(set(pid_refs[pid]))
         savenum+=1
 
         if savenum%100000==0:
@@ -477,9 +477,9 @@ if __name__ == '__main__':
 
     # plot_subj_sim_matrix()
 
-    # stat_refs()
+    stat_refs()
 
-    stat_paper_cN()
+    # stat_paper_cN()
 
 
 
