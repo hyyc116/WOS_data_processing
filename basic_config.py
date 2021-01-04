@@ -35,7 +35,7 @@ from networkx.algorithms.core import k_core
 import psycopg2
 from cycler import cycler
 # import statsmodels.api as sm
-lowess = sm.nonparametric.lowess
+# lowess = sm.nonparametric.lowess
 import scipy
 
 # plt.style.use('ggplot')
