@@ -108,6 +108,8 @@ def stats_from_pid_cits():
 
         pid,citing_id = line.split("\t")
 
+        
+
         if pid==citing_id:
             continue
 
@@ -486,6 +488,8 @@ if __name__ == '__main__':
     stat_refs()
 
     stat_paper_cN()
+
+    stat_ref_num()
 
 
 
