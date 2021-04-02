@@ -169,7 +169,7 @@ def fetch_titles():
         if progress % 1000000 == 0:
             logging.info('progress {} ...'.format(progress))
 
-        pid_title[pid].add(title)
+        pid_title[pid] = title
 
     open('data/pid_teamsize.json', 'w').write(json.dumps(pid_title))
     logging.info('{} data saved to data/pid_teamsize.json'.format(
