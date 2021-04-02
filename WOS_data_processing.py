@@ -36,6 +36,7 @@ from basic_config import *
 
 from basic_attr_fetcher import *
 
+
 def stat_basic_attr():
     fetch_subjects()
     fetch_pubyear()
@@ -48,82 +49,84 @@ def load_basic_data(isStat=False):
     logging.info('======== LOADING BASIC DATA =============')
     logging.info('======== ================== =============')
 
-
     logging.info('loading paper pubyear ...')
     pid_pubyear = json.loads(open('data/pid_pubyear.json').read())
     logging.info('{} papers has year label.'.format(len(pid_pubyear.keys())))
 
     logging.info('loading paper subjects ...')
     pid_subjects = json.loads(open('data/pid_subjects.json').read())
-    logging.info('{} papers has subject label.'.format(len(pid_subjects.keys())))
+    logging.info('{} papers has subject label.'.format(len(
+        pid_subjects.keys())))
 
     logging.info('loading paper top subjects ...')
     pid_topsubjs = json.loads(open('data/pid_topsubjs.json').read())
-    logging.info('{} papers has top subject label.'.format(len(pid_topsubjs.keys())))
+    logging.info('{} papers has top subject label.'.format(
+        len(pid_topsubjs.keys())))
 
     logging.info('loading paper teamsize ...')
     pid_teamsize = json.loads(open('data/pid_teamsize.json').read())
-    logging.info('{} papers has teamsize label.'.format(len(pid_teamsize.keys())))
+    logging.info('{} papers has teamsize label.'.format(
+        len(pid_teamsize.keys())))
 
     if isStat:
-        interset = set(pid_pubyear.keys())&set(pid_teamsize.keys())&set(pid_topsubjs.keys())&set(pid_topsubjs.keys())
+        interset = set(pid_pubyear.keys()) & set(pid_teamsize.keys()) & set(
+            pid_topsubjs.keys()) & set(pid_topsubjs.keys())
         logging.info('{} papers has both four attrs.'.format(len(interset)))
 
     logging.info('======== LOADING BASIC DATA DONE =============')
     logging.info('======== ======================= =============')
 
-    return pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize
+    return pid_pubyear, pid_subjects, pid_topsubjs, pid_teamsize
+
 
 def stats_from_pid_cits():
-    
+
     ##基础数据统计
-    pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
+    pid_pubyear, pid_subjects, pid_topsubjs, pid_teamsize = load_basic_data()
 
     ## 学科间的相互引用
     subj_refnum = defaultdict(int)
-    subj_subj_refnum = defaultdict(lambda:defaultdict(int))
+    subj_subj_refnum = defaultdict(lambda: defaultdict(int))
 
     topsubj_refnum = defaultdict(int)
-    topsubj_topsubj_refnum = defaultdict(lambda:defaultdict(int))
+    topsubj_topsubj_refnum = defaultdict(lambda: defaultdict(int))
 
     ## 非本地引文数量
-    subj_year_outrefnum = defaultdict(lambda:defaultdict(int))
-    topsubj_year_outrefnum = defaultdict(lambda:defaultdict(int))
+    subj_year_outrefnum = defaultdict(lambda: defaultdict(int))
+    topsubj_year_outrefnum = defaultdict(lambda: defaultdict(int))
 
-    subj_year_refnum = defaultdict(lambda:defaultdict(int))
-    topsubj_year_refnum = defaultdict(lambda:defaultdict(int))
+    subj_year_refnum = defaultdict(lambda: defaultdict(int))
+    topsubj_year_refnum = defaultdict(lambda: defaultdict(int))
 
     ## 每篇论文随着时间的引用次数
-    pid_year_citnum = defaultdict(lambda:defaultdict(int))
+    pid_year_citnum = defaultdict(lambda: defaultdict(int))
 
     progress = 0
     lines = []
     for line in open('data/pid_cits_ALL.txt'):
 
-        progress+=1
-        if progress%100000000==0:
+        progress += 1
+        if progress % 100000000 == 0:
             logging.info('reading %d citation relations....' % progress)
 
         line = line.strip()
 
-        pid,citing_id = line.split("\t")
+        pid, citing_id = line.split("\t")
 
-        
-
-        if pid==citing_id:
+        if pid == citing_id:
             continue
 
-        cited_year = pid_pubyear.get(pid,None)
+        cited_year = pid_pubyear.get(pid, None)
 
-        cited_subjs = pid_subjects.get(pid,None)
+        cited_subjs = pid_subjects.get(pid, None)
 
-        cited_topsubjs = pid_topsubjs.get(pid,None)
+        cited_topsubjs = pid_topsubjs.get(pid, None)
 
-        citing_year = pid_pubyear.get(citing_id,None)
+        citing_year = pid_pubyear.get(citing_id, None)
 
-        citing_subjs = pid_subjects.get(citing_id,None)
+        citing_subjs = pid_subjects.get(citing_id, None)
 
-        citing_topsubjs = pid_topsubjs.get(citing_id,None)
+        citing_topsubjs = pid_topsubjs.get(citing_id, None)
 
         ##如果引证文献没有数据 则略过
         if citing_year is None or citing_subjs is None or citing_topsubjs is None:
@@ -133,56 +136,60 @@ def stats_from_pid_cits():
         if cited_year is None or cited_subjs is None or cited_topsubjs is None:
 
             for subj in citing_subjs:
-                subj_year_outrefnum[subj][citing_year]+=1
+                subj_year_outrefnum[subj][citing_year] += 1
 
             for topsubj in citing_topsubjs:
-                topsubj_year_outrefnum[topsubj][citing_year]+=1
+                topsubj_year_outrefnum[topsubj][citing_year] += 1
 
             continue
 
         for subj in citing_subjs:
-            subj_year_refnum[subj][citing_year]+=1
+            subj_year_refnum[subj][citing_year] += 1
 
-            subj_refnum[subj]+=1
+            subj_refnum[subj] += 1
 
             for cited_subj in cited_subjs:
-                subj_subj_refnum[subj][cited_subj]+=1
+                subj_subj_refnum[subj][cited_subj] += 1
 
         for topsubj in citing_topsubjs:
-            topsubj_year_refnum[topsubj][citing_year]+=1
+            topsubj_year_refnum[topsubj][citing_year] += 1
 
-            topsubj_refnum[topsubj]+=1
+            topsubj_refnum[topsubj] += 1
 
             for cited_topsubj in cited_topsubjs:
-                topsubj_topsubj_refnum[topsubj][cited_topsubj]+=1
+                topsubj_topsubj_refnum[topsubj][cited_topsubj] += 1
 
-        pid_year_citnum[pid][citing_year]+=1
+        pid_year_citnum[pid][citing_year] += 1
 
-    open("data/pid_year_citnum.json",'w').write(json.dumps(pid_year_citnum))
+    open("data/pid_year_citnum.json", 'w').write(json.dumps(pid_year_citnum))
     logging.info('data saved to data/pid_year_citnum.json')
 
-    open("data/subj_refnum.json",'w').write(json.dumps(subj_refnum))
+    open("data/subj_refnum.json", 'w').write(json.dumps(subj_refnum))
     logging.info('data saved to data/subj_refnum.json')
 
-    open("data/subj_year_refnum.json",'w').write(json.dumps(subj_year_refnum))
+    open("data/subj_year_refnum.json", 'w').write(json.dumps(subj_year_refnum))
     logging.info('data saved to data/subj_year_refnum.json')
 
-    open("data/subj_year_outrefnum.json",'w').write(json.dumps(subj_year_outrefnum))
+    open("data/subj_year_outrefnum.json",
+         'w').write(json.dumps(subj_year_outrefnum))
     logging.info('data saved to data/subj_year_outrefnum.json')
 
-    open("data/topsubj_refnum.json",'w').write(json.dumps(topsubj_refnum))
+    open("data/topsubj_refnum.json", 'w').write(json.dumps(topsubj_refnum))
     logging.info('data saved to data/topsubj_refnum.json')
 
-    open("data/topsubj_year_refnum.json",'w').write(json.dumps(topsubj_year_refnum))
+    open("data/topsubj_year_refnum.json",
+         'w').write(json.dumps(topsubj_year_refnum))
     logging.info('data saved to data/topsubj_year_refnum.json')
 
-    open("data/topsubj_year_outrefnum.json",'w').write(json.dumps(topsubj_year_outrefnum))
+    open("data/topsubj_year_outrefnum.json",
+         'w').write(json.dumps(topsubj_year_outrefnum))
     logging.info('data saved to data/topsubj_year_outrefnum.json')
 
-    open("data/subj_subj_refnum.json",'w').write(json.dumps(subj_subj_refnum))
+    open("data/subj_subj_refnum.json", 'w').write(json.dumps(subj_subj_refnum))
     logging.info('data saved to data/subj_subj_refnum.json')
 
-    open("data/topsubj_topsubj_refnum.json",'w').write(json.dumps(topsubj_topsubj_refnum))
+    open("data/topsubj_topsubj_refnum.json",
+         'w').write(json.dumps(topsubj_topsubj_refnum))
     logging.info('data saved to data/topsubj_topsubj_refnum.json')
 
 
@@ -190,9 +197,9 @@ def stats_from_pid_cits():
 def stat_and_visualize_data():
 
     ## 各领域的论文数量及随时间的变化曲线
-    pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
+    pid_pubyear, pid_subjects, pid_topsubjs, pid_teamsize = load_basic_data()
 
-    subj_year_num = defaultdict(lambda:defaultdict(int))
+    subj_year_num = defaultdict(lambda: defaultdict(int))
 
     subj_totalnum = defaultdict(int)
 
@@ -201,7 +208,7 @@ def stat_and_visualize_data():
 
     for pid in pid_pubyear:
 
-        subjs = pid_topsubjs.get(pid,None)
+        subjs = pid_topsubjs.get(pid, None)
 
         pubyear = pid_pubyear[pid]
 
@@ -214,14 +221,14 @@ def stat_and_visualize_data():
 
             allsubjs.add(subj)
 
-            subj_year_num[subj][pubyear]+=1
+            subj_year_num[subj][pubyear] += 1
 
-            subj_totalnum[subj]+=1
+            subj_totalnum[subj] += 1
 
     tableLines = ['|year|{}|'.format('|'.join(sorted(list(allsubjs))))]
-    tableLines.append('|:---:|{}|'.format('|'.join([':---:']*len(allsubjs))))
+    tableLines.append('|:---:|{}|'.format('|'.join([':---:'] * len(allsubjs))))
 
-    for year in sorted(years,key=lambda x:int(x)):
+    for year in sorted(years, key=lambda x: int(x)):
         line = []
         line.append(year)
         for subj in sorted(subj_year_num.keys()):
@@ -237,13 +244,11 @@ def stat_and_visualize_data():
 
     tableLines.append('|{}|'.format('|'.join(totalline)))
 
-
-    open("subj_paper_num.md",'w').write('\n'.join(tableLines))
+    open("subj_paper_num.md", 'w').write('\n'.join(tableLines))
 
     logging.info('paper num saved to subj_paper_num.md')
 
-
-    plt.figure(figsize=(7,5))
+    plt.figure(figsize=(7, 5))
 
     for subj in sorted(subj_year_num.keys()):
 
@@ -252,13 +257,12 @@ def stat_and_visualize_data():
         xs = []
         ys = []
 
-        for year in sorted(year_num.keys(),key=lambda x:int(x)):
+        for year in sorted(year_num.keys(), key=lambda x: int(x)):
 
             xs.append(int(year))
             ys.append(year_num[year])
 
-        plt.plot(xs,ys,label=subj)
-
+        plt.plot(xs, ys, label=subj)
 
     plt.yscale('log')
 
@@ -270,17 +274,17 @@ def stat_and_visualize_data():
 
     plt.tight_layout()
 
-    plt.savefig('fig/subj_year_num.png',dpi=400)
+    plt.savefig('fig/subj_year_num.png', dpi=400)
 
     logging.info('fig saved to fig/subj_year_num.png.')
 
 
-def subj_sim_cal(data_path,out_path):
+def subj_sim_cal(data_path, out_path):
 
     subj_subj_refnum = json.loads(open(data_path).read())
 
     subj_refT = defaultdict(int)
-    subj_citT = defaultdict(int) 
+    subj_citT = defaultdict(int)
 
     for subj in subj_subj_refnum.keys():
 
@@ -288,8 +292,8 @@ def subj_sim_cal(data_path,out_path):
 
             refnum = subj_subj_refnum[subj][cited_subj]
 
-            subj_refT[subj]+=refnum
-            subj_citT[cited_subj]+=refnum
+            subj_refT[subj] += refnum
+            subj_citT[cited_subj] += refnum
 
     subjs = subj_refT.keys()
 
@@ -303,8 +307,8 @@ def subj_sim_cal(data_path,out_path):
 
             subj2 = subjs[j]
 
-            R_ij = subj_subj_refnum[subj1].get(subj2,0)
-            R_ji = subj_subj_refnum[subj2].get(subj1,0)
+            R_ij = subj_subj_refnum[subj1].get(subj2, 0)
+            R_ji = subj_subj_refnum[subj2].get(subj1, 0)
 
             TR_i = subj_refT[subj1]
             TR_j = subj_refT[subj2]
@@ -312,12 +316,12 @@ def subj_sim_cal(data_path,out_path):
             TC_i = subj_citT[subj1]
             TC_j = subj_citT[subj2]
 
-            sim = (R_ji+R_ij)/(np.sqrt((TC_i+TR_i)*(TC_j+TR_j)))
-            print(subj1,subj2,sim,R_ij,R_ji,TR_i,TC_i,TR_j,TC_j)
+            sim = (R_ji + R_ij) / (np.sqrt((TC_i + TR_i) * (TC_j + TR_j)))
+            print(subj1, subj2, sim, R_ij, R_ji, TR_i, TC_i, TR_j, TC_j)
 
             subj_subj_sim[subj1][subj2] = sim
 
-    open(out_path,'w').write(json.dumps(subj_subj_sim))
+    open(out_path, 'w').write(json.dumps(subj_subj_sim))
 
     logging.info('data saved to {}.'.format(out_path))
 
@@ -328,7 +332,8 @@ def plot_subj_sim_matrix():
 
     tableLines = []
     header = '|subj|{}|'.format('|'.join(sorted(subj_subj_sim.keys())))
-    header2 = '|:---:|{}|'.format('|'.join([':---:']*len(subj_subj_sim.keys())))
+    header2 = '|:---:|{}|'.format('|'.join([':---:'] *
+                                           len(subj_subj_sim.keys())))
 
     tableLines.append(header)
     tableLines.append(header2)
@@ -341,8 +346,7 @@ def plot_subj_sim_matrix():
 
         tableLines.append('|{}|'.format('|'.join(line)))
 
-
-    open('sim_matrix.md','w').write('\n'.join(tableLines))
+    open('sim_matrix.md', 'w').write('\n'.join(tableLines))
 
     logging.info('data saved to sim_matrix.md')
 
@@ -350,8 +354,8 @@ def plot_subj_sim_matrix():
 def stat_refs():
 
     ##基础数据统计
-    pid_pubyear,pid_subjects,pid_topsubjs,pid_teamsize = load_basic_data()
-    
+    pid_pubyear, pid_subjects, pid_topsubjs, pid_teamsize = load_basic_data()
+
     ## 每篇论文随着时间的引用次数
     pid_refs = defaultdict(list)
 
@@ -361,27 +365,27 @@ def stat_refs():
     lines = []
     for line in open('data/pid_cits_ALL.txt'):
 
-        progress+=1
-        if progress%100000000==0:
+        progress += 1
+        if progress % 100000000 == 0:
             logging.info('reading %d citation relations....' % progress)
 
         line = line.strip()
 
-        pid,citing_id = line.split("\t")
+        pid, citing_id = line.split("\t")
 
-        pid_refnum[citing_id]+=1
+        pid_refnum[citing_id] += 1
 
-        cited_year = pid_pubyear.get(pid,None)
+        cited_year = pid_pubyear.get(pid, None)
 
-        cited_subjs = pid_subjects.get(pid,None)
+        cited_subjs = pid_subjects.get(pid, None)
 
-        cited_topsubjs = pid_topsubjs.get(pid,None)
+        cited_topsubjs = pid_topsubjs.get(pid, None)
 
-        citing_year = pid_pubyear.get(citing_id,None)
+        citing_year = pid_pubyear.get(citing_id, None)
 
-        citing_subjs = pid_subjects.get(citing_id,None)
+        citing_subjs = pid_subjects.get(citing_id, None)
 
-        citing_topsubjs = pid_topsubjs.get(citing_id,None)
+        citing_topsubjs = pid_topsubjs.get(citing_id, None)
 
         ##如果引证文献没有数据 则略过
         if citing_year is None or citing_subjs is None or citing_topsubjs is None:
@@ -391,34 +395,34 @@ def stat_refs():
         if cited_year is None or cited_subjs is None or cited_topsubjs is None:
             continue
 
-        if citing_id==pid:
+        if citing_id == pid:
             continue
 
         pid_refs[citing_id].append(pid)
 
     logging.info('there are {:,} paper has refs.'.format(len(pid_refs)))
 
-    open('data/pid_refnum.json','w').write(json.dumps(pid_refnum))
+    open('data/pid_refnum.json', 'w').write(json.dumps(pid_refnum))
 
     ## 将论文的数据分为多个进行存储，每100000个存一行
     saved_dict = {}
     savenum = 0
     out_path = 'data/pid_refs.txt'
-    of = open(out_path,'w')
+    of = open(out_path, 'w')
     for pid in pid_refs.keys():
 
         saved_dict[pid] = list(set(pid_refs[pid]))
-        savenum+=1
+        savenum += 1
 
-        if savenum%100000==0:
+        if savenum % 100000 == 0:
 
-            of.write(json.dumps(saved_dict)+'\n')
+            of.write(json.dumps(saved_dict) + '\n')
 
             saved_dict = {}
 
-    if len(saved_dict)>0:
+    if len(saved_dict) > 0:
 
-        of.write(json.dumps(saved_dict)+'\n')
+        of.write(json.dumps(saved_dict) + '\n')
 
     of.close()
     logging.info('data saved to {}.'.format(out_path))
@@ -447,29 +451,29 @@ def stat_paper_cN():
 
         for year in pid_year_citnum[pid].keys():
 
-            if int(year)-int(pubyear)<=2:
+            if int(year) - int(pubyear) <= 2:
 
-                pid_c2[pid]+=pid_year_citnum[pid][year]
+                pid_c2[pid] += pid_year_citnum[pid][year]
 
-            if int(year)-int(pubyear)<=5:
+            if int(year) - int(pubyear) <= 5:
 
-                pid_c5[pid]+=pid_year_citnum[pid][year]
+                pid_c5[pid] += pid_year_citnum[pid][year]
 
-            if int(year)-int(pubyear)<=10:
-                pid_c10[pid]+=pid_year_citnum[pid][year]
+            if int(year) - int(pubyear) <= 10:
+                pid_c10[pid] += pid_year_citnum[pid][year]
 
-            pid_cn[pid]+=pid_year_citnum[pid][year]
+            pid_cn[pid] += pid_year_citnum[pid][year]
 
-    open('data/pid_c2.json','w').write(json.dumps(pid_c2))
+    open('data/pid_c2.json', 'w').write(json.dumps(pid_c2))
     logging.info('data saved to data/pid_c2.json')
 
-    open('data/pid_c5.json','w').write(json.dumps(pid_c5))
+    open('data/pid_c5.json', 'w').write(json.dumps(pid_c5))
     logging.info('data saved to data/pid_c5.json')
 
-    open('data/pid_c10.json','w').write(json.dumps(pid_c10))
+    open('data/pid_c10.json', 'w').write(json.dumps(pid_c10))
     logging.info('data saved to data/pid_c10.json')
 
-    open('data/pid_cn.json','w').write(json.dumps(pid_cn))
+    open('data/pid_cn.json', 'w').write(json.dumps(pid_cn))
     logging.info('data saved to data/pid_cn.json')
 
 
@@ -480,8 +484,9 @@ if __name__ == '__main__':
 
     stat_and_visualize_data()
 
-    subj_sim_cal('data/subj_subj_refnum.json','data/subj_subj_sim.json')
-    subj_sim_cal('data/topsubj_topsubj_refnum.json','data/topsubj_topsubj_sim.json')
+    subj_sim_cal('data/subj_subj_refnum.json', 'data/subj_subj_sim.json')
+    subj_sim_cal('data/topsubj_topsubj_refnum.json',
+                 'data/topsubj_topsubj_sim.json')
 
     plot_subj_sim_matrix()
 
@@ -489,7 +494,4 @@ if __name__ == '__main__':
 
     stat_paper_cN()
 
-    stat_ref_num()
-
-
-
+    # stat_ref_num()
