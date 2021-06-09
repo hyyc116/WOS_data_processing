@@ -3,6 +3,32 @@
 from basic_config import *
 
 
+def subjnum_dis():
+
+    pid_subjs = json.loads(open('data/pid_subjects.json').read())
+
+    num_dis = defaultdict(int)
+    for pid in pid_subjs.keys():
+
+        subj_num = len(pid_subjs[pid])
+
+        num_dis[subj_num] += 1
+
+    xs = []
+    ys = []
+    for num in sorted(num_dis.keys()):
+        xs.append(num)
+        ys.append(num_dis[num])
+
+    plt.figure(figsize=(5, 4))
+
+    plt.plot(xs, ys)
+
+    plt.tight_layout()
+
+    plt.savefig('fig/subj_num_dis.png', dpi=400)
+
+
 def fetch_subjects():
     pid_subjects = defaultdict(list)
     ## query database wos_summary
@@ -149,6 +175,7 @@ def fetch_teamsize():
 
     pid_ts = {}
     for pid in pid_names:
+
         pid_ts[pid] = len(pid_names[pid])
 
     open('data/pid_teamsize.json', 'w').write(json.dumps(pid_ts))
@@ -176,7 +203,14 @@ def fetch_titles():
         len(pid_title)))
 
 
+# 获取WOS的摘要
+def fectch_abs():
+
+    pass
+
+
 if __name__ == '__main__':
     # fetch_teamsize()
 
-    fetch_titles()
+    # fetch_titles()
+    subjnum_dis()
