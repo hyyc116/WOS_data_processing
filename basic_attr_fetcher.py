@@ -206,11 +206,41 @@ def fetch_titles():
 # 获取WOS的摘要
 def fectch_abs():
 
-    pass
+    sql = 'select id,abstract_id,paragraph_id,paragraph_label from wos_core.wos_abstract_paragraphs'
+
+    query_op = dbop()
+
+    f = open('data/wos_abs.txt', 'w+')
+
+    progress = 0
+
+    lines = []
+
+    for pid, abstract_id, paragraph_id, paragraph_label in query_op.query_database(
+            sql):
+
+        progress += 1
+
+        lines.append(
+            f"{pid}#$#{abstract_id}#$#{paragraph_id}#$#{paragraph_label}")
+
+        if len(lines) == 100000:
+
+            logging.info(f'progress {progress} ...')
+            f.write('\n'.join(lines) + '\n')
+
+            lines = []
+
+    if len(lines) > 0:
+        f.write('\n'.join(lines) + '\n')
+
+    logging.info('Done')
 
 
 if __name__ == '__main__':
     # fetch_teamsize()
 
     # fetch_titles()
-    subjnum_dis()
+    # subjnum_dis()
+
+    fectch_abs()
