@@ -206,7 +206,7 @@ def fetch_titles():
 # 获取WOS的摘要
 def fectch_abs():
 
-    sql = 'select id,abstract_id,paragraph_id,paragraph_label from wos_core.wos_abstract_paragraphs'
+    sql = 'select id,abstract_id,paragraph_id,paragraph_text from wos_core.wos_abstract_paragraphs'
 
     query_op = dbop()
 
