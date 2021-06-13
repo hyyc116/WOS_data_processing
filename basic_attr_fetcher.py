@@ -237,10 +237,37 @@ def fectch_abs():
     logging.info('Done')
 
 
+def featch_author_info():
+
+    sql = 'select id,addr_id,full_address from wos_core.wos_addresses'
+
+    query_op = dbop()
+    lines = []
+
+    f = open("data/wos_address.txt", 'w')
+    for id, addr_id, full_address in query_op.query_database(sql):
+
+        line = f'{id},{addr_id},{full_address}'
+
+        lines.append(line)
+
+        if len(lines) > 100000:
+
+            f.write('\n'.join(lines) + '\n')
+
+            lines = []
+
+    if len(lines) > 0:
+        f.write('\n'.join(lines) + '\n')
+
+    logging.info('DONE')
+
+
 if __name__ == '__main__':
     # fetch_teamsize()
 
     # fetch_titles()
     # subjnum_dis()
 
-    fectch_abs()
+    # fectch_abs()
+    featch_author_info()
